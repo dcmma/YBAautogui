@@ -1,10 +1,10 @@
 local VirtualInputManager = game:GetService("VirtualInputManager")
 
 -- === CONFIG ===
-local DELAY_AFTER_JOIN = 6
+local DELAY_AFTER_JOIN = 2
 
 -- Click positions (in order)
-local CLICK_1 = Vector2.new(1113,431)
+local CLICK_1 = Vector2.new(738, 410)
 local CLICK_2 = Vector2.new(1122, 430)
 local CLICK_3 = Vector2.new(1122, 467)
 local CLICK_4 = Vector2.new(1119, 504)
@@ -58,3 +58,46 @@ click(CLICK_5)
 drag(DRAG_START, DRAG_END, DRAG_DURATION)
 
 click(CLICK_6)
+
+local CoreGui = game:GetService("CoreGui")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+-- === CONFIG ===
+local CLICK_1 = Vector2.new(967, 935)
+local CLICK_2 = Vector2.new(901, 356)
+local DELAY = 5
+
+local TRIGGER_TEXT = "HAS WON THE METAL BALL RUN"
+local triggered = false
+
+-- Click helper
+local function click(pos)
+    VirtualInputManager:SendMouseButtonEvent(pos.X, pos.Y, 0, true, game, 0)
+    task.wait()
+    VirtualInputManager:SendMouseButtonEvent(pos.X, pos.Y, 0, false, game, 0)
+end
+
+-- Check UI objects for server message
+local function checkObject(obj)
+    if triggered then return end
+    if obj:IsA("TextLabel") then
+        local text = obj.Text
+        if text and string.find(text, TRIGGER_TEXT) then
+            triggered = true
+            print("[Metal Ball Run Trigger Detected]")
+            print(text)
+
+            click(CLICK_1)
+            task.wait(DELAY)
+            click(CLICK_2)
+        end
+    end
+end
+
+-- Scan existing UI (in case message already exists)
+for _, obj in ipairs(CoreGui:GetDescendants()) do
+    checkObject(obj)
+end
+
+-- Listen for new server messages
+CoreGui.DescendantAdded:Connect(checkObject)
