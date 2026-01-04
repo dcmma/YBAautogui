@@ -1,0 +1,54 @@
+-- ===============================
+-- LOAD SAFETY
+-- ===============================
+repeat task.wait() until game:IsLoaded()
+task.wait(5)
+
+-- ===============================
+-- CLICK / DRAG SCRIPT
+-- ===============================
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+local DELAY_AFTER_JOIN = 6
+
+local CLICK_1 = Vector2.new(741, 410)
+local CLICK_2 = Vector2.new(1122, 430)
+local CLICK_3 = Vector2.new(1122, 467)
+local CLICK_4 = Vector2.new(1119, 504)
+local CLICK_5 = Vector2.new(1115, 537)
+local CLICK_6 = Vector2.new(1080, 593)
+
+local DRAG_START = Vector2.new(1161, 392)
+local DRAG_END   = Vector2.new(1161, 620)
+local DRAG_TIME  = 0.5
+
+local function click(pos)
+    VirtualInputManager:SendMouseButtonEvent(pos.X, pos.Y, 0, true, game, 0)
+    task.wait()
+    VirtualInputManager:SendMouseButtonEvent(pos.X, pos.Y, 0, false, game, 0)
+end
+
+local function drag(startPos, endPos, duration)
+    VirtualInputManager:SendMouseButtonEvent(startPos.X, startPos.Y, 0, true, game, 0)
+
+    local steps = 15
+    for i = 1, steps do
+        local t = i / steps
+        local x = startPos.X + (endPos.X - startPos.X) * t
+        local y = startPos.Y + (endPos.Y - startPos.Y) * t
+        VirtualInputManager:SendMouseMoveEvent(x, y, game)
+        task.wait(duration / steps)
+    end
+
+    VirtualInputManager:SendMouseButtonEvent(endPos.X, endPos.Y, 0, false, game, 0)
+end
+
+task.wait(DELAY_AFTER_JOIN)
+
+click(CLICK_1)
+click(CLICK_2)
+drag(DRAG_START, DRAG_END, DRAG_TIME)
+click(CLICK_3)
+click(CLICK_4)
+click(CLICK_5)
+click(CLICK_6)
